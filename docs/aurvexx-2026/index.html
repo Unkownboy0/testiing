@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeetorusAI — AURVEXX’2026 Technical Architecture & Executive Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Mermaid.js for diagram rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg-base: #07090e;
+      --bg-surface: #0d121f;
+      --bg-surface-elevated: #141c2e;
+      --bg-card: rgba(20, 28, 46, 0.65);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --sidebar-width: 320px;
+      --header-height: 70px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-surface-elevated);
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #27354f;
+    }
+
+    /* Top Navbar */
+    header.top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: rgba(7, 9, 14, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #fff;
+      box-shadow: 0 0 16px var(--primary-glow);
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-badge {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.55rem;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: var(--accent-cyan);
+      border-radius: 999px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-box input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.9rem 0.45rem 2.2rem;
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      width: 260px;
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+      width: 320px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    .quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 7px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-pitch {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
+    }
+    .btn-pitch:hover {
+      box-shadow: 0 0 18px rgba(124, 58, 237, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Main Layout */
+    .app-container {
+      display: flex;
+      margin-top: var(--header-height);
+      min-height: calc(100vh - var(--header-height));
+    }
+
+    /* Sidebar Navigation */
+    aside.sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      position: fixed;
+      top: var(--header-height);
+      bottom: 0;
+      left: 0;
+      overflow-y: auto;
+      padding: 1.25rem 0.85rem 3rem;
+      z-index: 50;
+    }
+
+    .nav-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 0.75rem 0.65rem 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .nav-item button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item button:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    .nav-item button.active {
+      background: rgba(99, 102, 241, 0.14);
+      color: #fff;
+      border-color: rgba(99, 102, 241, 0.3);
+      font-weight: 600;
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.65rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-dim);
+    }
+
+    .nav-item button.active .nav-badge {
+      background: rgba(99, 102, 241, 0.3);
+      color: var(--accent-cyan);
+    }
+
+    /* Main Content Area */
+    main.content-area {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 2.5rem 3.5rem;
+      max-width: 1300px;
+      position: relative;
+    }
+
+    .doc-page {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .doc-page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .page-category {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+      display: inline-block;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-top: 0.6rem;
+      max-width: 800px;
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Callout Alerts */
+    .alert {
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    .alert-tip {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #a7f3d0;
+    }
+
+    .alert-note {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #bae6fd;
+    }
+
+    .alert-important {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #fde68a;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-display);
+    }
+
+    td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-main);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-partial {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-amber);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .badge-planned {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    /* Code blocks */
+    pre {
+      background: #090d16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      margin: 1.25rem 0;
+      position: relative;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 0.15em 0.35em;
+      border-radius: 4px;
+      color: #38bdf8;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.25rem 0.55rem;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    /* Diagram Panels */
+    .diagram-panel {
+      background: #080c16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      margin: 2rem 0;
+      overflow: hidden;
+    }
+
+    .diagram-header {
+      background: var(--bg-surface-elevated);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .diagram-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .diagram-viewport {
+      padding: 2rem 1.5rem;
+      display: flex;
+      justify-content: center;
+      background: radial-gradient(circle at center, rgba(30, 41, 59, 0.4) 0%, transparent 70%);
+      overflow-x: auto;
+    }
+
+    .diagram-explanation {
+      padding: 1.25rem 1.5rem;
+      background: rgba(13, 18, 31, 0.7);
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.9rem;
+    }
+
+    .explanation-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-dim);
+      padding: 0.25rem 0.65rem;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .lang-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .lang-text {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .lang-text em {
+      color: #cbd5e1;
+      font-style: italic;
+    }
+
+    /* Modal for Quick Pitches */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      max-width: 680px;
+      width: 100%;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      animation: modalPop 0.2s ease-out;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.25rem;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+
+    /* Interactive Stats Bar */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      aside.sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      aside.sidebar.open {
+        transform: translateX(0);
+      }
+      main.content-area {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <a href="#" class="brand">
+      <div class="brand-icon">G</div>
+      <div class="brand-text">
+        <h1>GeetorusAI <span class="brand-badge">AURVEXX’26</span></h1>
+      </div>
+    </a>
+
+    <div class="nav-center">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search architecture, routes, schemas...">
+      </div>
+      <div class="status-indicator">
+        <span class="pulse-dot"></span>
+        <span>Control Plane Active</span>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="btn btn-pitch" onclick="openPitchModal('30s')">⚡ 30s Pitch</button>
+      <button class="btn btn-ghost" onclick="openPitchModal('2m')">🔬 2m Technical Pitch</button>
+      <a href="http://localhost:3100" target="_blank" class="btn btn-ghost">🚀 Open Local UI (Port 3100)</a>
+    </div>
+  </header>
+
+  <!-- App Body Layout -->
+  <div class="app-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="nav-section-title">
+        <span>Index & Overviews</span>
+        <span style="font-size: 0.65rem;">4 DOCS</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button class="active" onclick="showDoc('readme')">
+            <span>📚 Documentation Index</span>
+            <span class="nav-badge">README</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('00-overview')">
+            <span>⚡ Project Overview</span>
+            <span class="nav-badge">00</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('01-problem')">
+            <span>🎯 Purpose & Problem</span>
+            <span class="nav-badge">01</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('02-features')">
+            <span>✨ Feature Catalog Matrix</span>
+            <span class="nav-badge">02</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="nav-section-title">
+        <span>Architecture & Execution</span>
+        <span style="font-size: 0.65rem;">5 DOCS</span>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button onclick="showDoc('03-architecture')">
+            <span>🏛️ System Architecture</span>
+            <span class="nav-badge">03</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('04-diagrams')">
+            <span>📊 Interactive Diagrams (9)</span>
+            <span class="nav-badge">04</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('05-flow')">
+            <span>🔄 Complete Working Flow</span>
+            <span class="nav-badge">05</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('06-modules')">
+            <span>📁 Module & Directory Map</span>
+            <span class="nav-badge">06</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button onclick="showDoc('07-functions')">
+            <span>⚙️ Functions & Classes Reference</span>
+            <span class="nav-badge">07</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="nav-section-title">
+        <span>Governance & Engine</span>
+        <span style="font-size: 0.65rem;">SUMMARY</span>
+      </div>
+      <div style="padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.03); border-radius: 8px; font-size: 0.78rem; color: var(--text-dim);">
+        <p><strong>DB Engine:</strong> 137 PostgreSQL tables</p>
+        <p><strong>API Routes:</strong> 78 modular endpoints</p>
+        <p><strong>Turn Scheduler:</strong> 29,391 lines (heartbeat.ts)</p>
+        <p><strong>Model Adapters:</strong> 13 AI providers</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="content-area">
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 1: README (Master Documentation Index) -->
+      <!-- ========================================================================= -->
+      <section id="doc-readme" class="doc-page active">
+        <div class="page-header">
+          <span class="page-category">Navigation Hub</span>
+          <h2 class="page-title">GeetorusAI — AURVEXX’2026 Documentation Hub</h2>
+          <p class="page-subtitle">The complete code-backed engineering, architecture, and live evaluation portal for the 8-Hour Fast-Pitch Hackathon.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-number" style="color: var(--accent-cyan);">78</span>
+            <span class="stat-label">Express REST Routes</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" style="color: var(--accent-emerald);">137</span>
+            <span class="stat-label">PostgreSQL Drizzle Tables</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" style="color: var(--accent-purple);">17</span>
+            <span class="stat-label">Turnkey Virtual Companies</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" style="color: var(--accent-amber);">13</span>
+            <span class="stat-label">AI Model Adapters</span>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 0.75rem;">🚀 What is Covered in this Audit Portal</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1rem;">This technical portal is built from the ground up by inspecting the real source code of the Geetorus monorepo. It details everything needed to explain the system to hackathon judges, demonstrate autonomous engineering tasks live, and defend the architecture against technical cross-questions.</p>
+          
+          <div class="alert alert-tip">
+            <span>💡</span>
+            <div><strong>Quick Tip for Evaluators:</strong> Click the <strong>"Interactive Diagrams (04)"</strong> tab in the sidebar to view all 9 system architecture flows rendered live via Mermaid.js, complete with step-by-step English and Thanglish explanations!</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Document Path</th>
+                <th>Subsystem Focus</th>
+                <th>Target Evaluation Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>00-project-overview.md</code></td>
+                <td>Executive Summary & Pitch Scripts</td>
+                <td>All Judges & Founder</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>01-product-purpose-and-problem.md</code></td>
+                <td>Single-Agent Failure vs. Virtual Company OS</td>
+                <td>Product Judges</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>02-existing-features-and-capabilities.md</code></td>
+                <td>Complete Feature Inventory & Verified Capabilities</td>
+                <td>Technical Evaluators</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>03-system-architecture.md</code></td>
+                <td>Deep Component Breakdown & Failure Modes</td>
+                <td>System Architects</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>04-architecture-diagrams.md</code></td>
+                <td>9 Validated Mermaid Diagrams (Dual Language)</td>
+                <td>Visual Evaluators</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>05-complete-working-flow.md</code></td>
+                <td>End-to-End Execution Trace (UI to Git Commit)</td>
+                <td>Backend Engineers</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>06-module-and-directory-reference.md</code></td>
+                <td>Monorepo Package & Directory Topology</td>
+                <td>DevOps Engineers</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+              <tr>
+                <td><code>07-functions-classes-and-responsibilities.md</code></td>
+                <td>Function-by-Function Codebase Reference</td>
+                <td>Lead Architects</td>
+                <td><span class="badge badge-verified">Verified</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 2: 00-project-overview -->
+      <!-- ========================================================================= -->
+      <section id="doc-00-overview" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">00 — Executive Brief</span>
+          <h2 class="page-title">Project Overview & Executive Brief</h2>
+          <p class="page-subtitle">Understand GeetorusAI in 30 seconds or 2 minutes with zero buzzwords and 100% technical truth.</p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #fff; margin-bottom: 0.6rem;">What is GeetorusAI Today?</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+            <strong>GeetorusAI</strong> is an open-source, enterprise-grade <strong>Autonomous AI Agent Control Plane & Virtual Company Operating System</strong>. Rather than being a simple prompt-response chat wrapper, Geetorus provides a stateful orchestration substrate that allows engineering teams, founders, and enterprises to model, supervise, and deploy coordinated teams of autonomous agents organized as "Virtual Companies" (e.g., <code>fullstack-forge</code>, <code>trail-of-bits-security</code>).
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-rose); font-size: 0.9rem; margin-bottom: 0.4rem;">❌ Conventional AI Chatbots & Wrappers</h4>
+              <ul style="font-size: 0.85rem; color: var(--text-muted); list-style: disc; margin-left: 1.2rem;">
+                <li>Single-turn prompt/response loops</li>
+                <li>Infinite retry loops that burn token credits</li>
+                <li>No human approval gates on destructive shell commands</li>
+                <li>Ephemeral memory; lost state on restart</li>
+              </ul>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-emerald); font-size: 0.9rem; margin-bottom: 0.4rem;">✅ Geetorus Virtual Company OS</h4>
+              <ul style="font-size: 0.85rem; color: var(--text-muted); list-style: disc; margin-left: 1.2rem;">
+                <li>Multi-agent hierarchy (Tech Lead, Coder, QA)</li>
+                <li>Deterministic turn heartbeat daemon (<code>heartbeat.ts</code>)</li>
+                <li><strong>Amber Gate</strong>: Sensitive actions pause for human verdict</li>
+                <li>137 relational PostgreSQL tables via Drizzle ORM</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #fff; margin-bottom: 0.6rem;">⚡ Spoken Pitch Scripts for Hackathon Rounds</h3>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <strong style="color: var(--accent-cyan); font-size: 0.9rem;">The 30-Second Elevator Pitch (Judging Round 1)</strong>
+              <button class="btn btn-ghost" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="copyPitchText('pitch-30s-text')">Copy</button>
+            </div>
+            <p id="pitch-30s-text" style="background: #090e18; padding: 1rem; border-radius: 8px; font-size: 0.9rem; color: #e2e8f0; border-left: 3px solid var(--accent-cyan);">
+              "Most AI tools today are single-agent chatbots that forget context, break production without asking, and have no accountability. <strong>Geetorus is a Virtual Company Operating System</strong>. We don't just prompt an LLM; we deploy an entire engineering department of coordinated agents—Tech Leads, Coders, and QA—governed by strict budget controls, human approval gates, and sandboxed Git environments. You assign a high-level goal, the agents decompose it into tracked issues, write code, run tests, and pause for your sign-off before anything touches production. It’s autonomous execution with enterprise safety."
+            </p>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <strong style="color: var(--primary); font-size: 0.9rem;">The 2-Minute Technical Pitch (Systems & Architecture Judges)</strong>
+              <button class="btn btn-ghost" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="copyPitchText('pitch-2m-text')">Copy</button>
+            </div>
+            <p id="pitch-2m-text" style="background: #090e18; padding: 1rem; border-radius: 8px; font-size: 0.9rem; color: #e2e8f0; border-left: 3px solid var(--primary);">
+              "Under the hood, Geetorus is built as a hardened TypeScript monorepo powered by an Express API server, React 19 frontend, and Drizzle ORM backed by 137 PostgreSQL relational tables. Autonomous behavior is driven by a deterministic heartbeat scheduling engine (<code>server/src/services/heartbeat.ts</code>) rather than uncontrolled while-loops. When a task is dispatched, the orchestration engine provisions an isolated Git worktree lease and dispatches the turn to the active model adapter—supporting Claude 3.5 Sonnet, GPT-4o, and local Ollama. All tool interactions flow through an MCP-compliant Tool Gateway that enforces cryptographically signed execution tokens. If an agent attempts a sensitive shell command or git push, Geetorus traps the call in an 'Amber' approval state. Once approved by the operator in the UI, the agent resumes execution, verifies completion contracts, and records an immutable audit log."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 3: 01-product-purpose-and-problem -->
+      <!-- ========================================================================= -->
+      <section id="doc-01-problem" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">01 — Market Problem</span>
+          <h2 class="page-title">Product Purpose & The Single-Agent Trap</h2>
+          <p class="page-subtitle">Why naive prompt loops fail in enterprise environments and how Virtual Companies solve it.</p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #fff; margin-bottom: 0.6rem;">The 5 Systemic Failures of Conventional Agents</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-rose); font-size: 0.95rem;">1. Runaway Token Costs (Lack of Financial Governance)</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Traditional frameworks allow agents to loop recursively upon error. When an LLM encounters a syntax error or a failing test, it retries blindly until API credits are exhausted. <strong>Geetorus Solution:</strong> Enforces hard budget incident policies (<code>packages/db/src/schema/budget_policies.ts</code>) and cost tracking per turn.
+              </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-amber); font-size: 0.95rem;">2. The "God Agent" Anti-Pattern (Lack of Specialization)</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Asking one single prompt to be the architect, developer, DB administrator, and tester leads to degraded reasoning and severe prompt drift. <strong>Geetorus Solution:</strong> Multi-Agent Virtual Companies where work is routed between distinct specialized agents with isolated roles.
+              </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-cyan); font-size: 0.95rem;">3. Absence of Human Sign-off Gates (Dangerous Actions)</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Autonomous agents executing destructive commands (deleting tables, pushing untested code to main) create enterprise liabilities. <strong>Geetorus Solution:</strong> First-class <strong>Amber Approval Gates</strong> requiring human operator verdicts before privileged tools execute.
+              </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-purple); font-size: 0.95rem;">4. Ephemeral State and Lost Context on Crash</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Most agent tools store state in volatile RAM or flat files. If the process crashes, all work is lost. <strong>Geetorus Solution:</strong> Fully relational persistence across 137 PostgreSQL tables tracking turns, tool outputs, and work products.
+              </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+              <h4 style="color: var(--accent-emerald); font-size: 0.95rem;">5. Lack of Packaging & Repeatability</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Setting up multi-agent teams typically requires writing brittle Python glue scripts. <strong>Geetorus Solution:</strong> Turnkey, version-controlled company packages (via <code>companies.sh</code>) that import with one command.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 4: 02-existing-features-and-capabilities -->
+      <!-- ========================================================================= -->
+      <section id="doc-02-features" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">02 — Feature Catalog</span>
+          <h2 class="page-title">Existing Features & Implementation Status</h2>
+          <p class="page-subtitle">Code-verified inventory of capabilities directly grounded in the repository.</p>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Feature / Subsystem</th>
+                <th>Status</th>
+                <th>Code Evidence File</th>
+                <th>Entry Point / Route</th>
+                <th>Verified Limitation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Multi-Agent Company Provisioning</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/routes/companies.ts</code></td>
+                <td><code>POST /api/companies</code></td>
+                <td>Org charts rendered dynamically via SVG</td>
+              </tr>
+              <tr>
+                <td><strong>Hierarchical Issue & Sub-Task Engine</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/routes/issues.ts</code></td>
+                <td><code>POST /api/issues</code></td>
+                <td>Route file is ~664KB (modularization on roadmap)</td>
+              </tr>
+              <tr>
+                <td><strong>Turn-Based Heartbeat Runner</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/services/heartbeat.ts</code></td>
+                <td><code>pnpm dev</code> daemon</td>
+                <td>Single-node event loop; watchdogs handle stalls</td>
+              </tr>
+              <tr>
+                <td><strong>Human Amber Approval Gates</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/routes/approvals.ts</code></td>
+                <td><code>POST /api/approvals/:id/decide</code></td>
+                <td>Requires operator in UI to resume execution</td>
+              </tr>
+              <tr>
+                <td><strong>MCP Tool Gateway & HMAC Signing</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/services/tool-gateway.ts</code></td>
+                <td><code>/api/tool-gateway</code></td>
+                <td>Tools must conform to Model Context Protocol JSON-RPC</td>
+              </tr>
+              <tr>
+                <td><strong>Pluggable AI Adapters</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>packages/adapters/*</code></td>
+                <td>Claude, Codex, Ollama, Gemini</td>
+                <td>Local Ollama tokens/sec depends on host GPU</td>
+              </tr>
+              <tr>
+                <td><strong>17 Turnkey Virtual Company Blueprints</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>geetorus-companies/</code></td>
+                <td><code>companies.sh import &lt;name&gt;</code></td>
+                <td>Some templates require specific provider API keys</td>
+              </tr>
+              <tr>
+                <td><strong>Real-Time WebSocket Event Stream</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/realtime/live-events-ws.ts</code></td>
+                <td><code>ws://localhost:3100/api/live-events</code></td>
+                <td>Client reconnection backoff is client-side</td>
+              </tr>
+              <tr>
+                <td><strong>Financial Budget & Cost Caps</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>server/src/services/budgets.ts</code></td>
+                <td><code>GET /api/costs</code></td>
+                <td>Tracks USD currency natively</td>
+              </tr>
+              <tr>
+                <td><strong>Embedded Postgres Zero-Config DB</strong></td>
+                <td><span class="badge badge-verified">Verified</span></td>
+                <td><code>packages/db/src/embedded-postgres.ts</code></td>
+                <td>Automatic on <code>pnpm dev</code></td>
+                <td>Stale PID on unclean Windows exit (fixed via script)</td>
+              </tr>
+              <tr>
+                <td><strong>Remote Cloud Sandboxes (e2b/Daytona)</strong></td>
+                <td><span class="badge badge-partial">Partially Verified</span></td>
+                <td><code>server/src/services/environments.ts</code></td>
+                <td><code>/api/environments</code></td>
+                <td>Requires active cloud sandbox API subscriptions</td>
+              </tr>
+              <tr>
+                <td><strong>Next.js Company Marketplace</strong></td>
+                <td><span class="badge badge-partial">Partially Verified</span></td>
+                <td><code>geetorus-market/src/app</code></td>
+                <td><code>http://localhost:3000</code></td>
+                <td>Checkout currently simulates transactions</td>
+              </tr>
+              <tr>
+                <td><strong>Vector Episodic Memory (pgvector)</strong></td>
+                <td><span class="badge badge-planned">Planned (P1)</span></td>
+                <td><code>docs/planning/roadmap.md</code></td>
+                <td>Future extension</td>
+                <td>Memory currently derived from relational issue history</td>
+              </tr>
+              <tr>
+                <td><strong>Distributed Queue (BullMQ/Redis)</strong></td>
+                <td><span class="badge badge-planned">Planned (P2)</span></td>
+                <td><code>docs/planning/roadmap.md</code></td>
+                <td>Future extension</td>
+                <td>Turn scheduler currently in-memory</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 5: 03-system-architecture -->
+      <!-- ========================================================================= -->
+      <section id="doc-03-architecture" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">03 — Architecture Overview</span>
+          <h2 class="page-title">Complete Multi-Layer System Architecture</h2>
+          <p class="page-subtitle">From presentation clients to the Drizzle database and model adapter layer.</p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #fff; margin-bottom: 0.75rem;">Architectural Layer Breakdown</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="padding: 1rem; background: var(--bg-surface-elevated); border-radius: 8px; border-left: 4px solid var(--accent-cyan);">
+              <h4 style="color: #fff; font-size: 0.95rem;">Layer 1: Presentation & Client Applications</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                React 19 + Vite frontend (<code>ui/src/App.tsx</code>), Unified Commander CLI (<code>cli/src/index.ts</code>), and Turnkey Packaging CLI (<code>companies-tool/src/index.ts</code>). Consumes REST API endpoints and subscribes to real-time WebSockets.
+              </p>
+            </div>
+
+            <div style="padding: 1rem; background: var(--bg-surface-elevated); border-radius: 8px; border-left: 4px solid var(--primary);">
+              <h4 style="color: #fff; font-size: 0.95rem;">Layer 2: API & Routing Layer</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Express 4 HTTP server (<code>server/src/app.ts</code>) hosting 78 route modules under <code>/api/*</code>. Enforces Zod schema validation, actor authentication (<code>actorMiddleware</code>), and strict company tenancy isolation.
+              </p>
+            </div>
+
+            <div style="padding: 1rem; background: var(--bg-surface-elevated); border-radius: 8px; border-left: 4px solid var(--accent-amber);">
+              <h4 style="color: #fff; font-size: 0.95rem;">Layer 3: Orchestration & Turn Scheduling</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Turn-based Heartbeat Daemon (<code>server/src/services/heartbeat.ts</code>). Acquires exclusive execution leases, tracks stall timeouts via <code>task-watchdogs.ts</code>, verifies financial budget limits, and triggers human approval gates.
+              </p>
+            </div>
+
+            <div style="padding: 1rem; background: var(--bg-surface-elevated); border-radius: 8px; border-left: 4px solid var(--accent-purple);">
+              <h4 style="color: #fff; font-size: 0.95rem;">Layer 4: AI Model Adapters & Tool Execution</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                13 model adapters under <code>packages/adapters/</code> (Claude, OpenAI, Ollama, OpenRouter). Model tools pass through the Model Context Protocol (MCP) Tool Gateway (<code>tool-gateway.ts</code>) with HMAC-SHA256 signature verification.
+              </p>
+            </div>
+
+            <div style="padding: 1rem; background: var(--bg-surface-elevated); border-radius: 8px; border-left: 4px solid var(--accent-emerald);">
+              <h4 style="color: #fff; font-size: 0.95rem;">Layer 5: Persistence & Encrypted Storage</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                PostgreSQL 16+ backing 137 relational tables via Drizzle ORM (<code>packages/db/src/schema/*.ts</code>). Bundles local zero-config <code>embedded-postgres</code> and an AES-256-GCM encrypted secrets vault.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 6: 04-architecture-diagrams (9 LIVE MERMAID DIAGRAMS) -->
+      <!-- ========================================================================= -->
+      <section id="doc-04-diagrams" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">04 — Visual Architecture</span>
+          <h2 class="page-title">Interactive System Architecture Diagrams</h2>
+          <p class="page-subtitle">9 code-backed architectural flows rendered live with dual-language explanations.</p>
+        </div>
+
+        <!-- Diagram A -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram A: High-Level System Architecture</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+graph TB
+    subgraph Clients["1. Operator Clients"]
+        UI["React 19 / Vite UI (Port 3100)"]
+        CLI["Geetorus CLI & companies.sh"]
+        ChatBridges["Discord / Slack / Teams Webhooks"]
+    end
+
+    subgraph Server["2. Geetorus Control Plane Server"]
+        Router["Express REST API (78 Route Modules)"]
+        AuthMid["Auth & Company Scoping Middleware"]
+        Heartbeat["Turn Scheduler & Heartbeat Daemon (heartbeat.ts)"]
+        ApprovalEng["Human-in-the-Loop Approval Engine"]
+        ToolGateway["MCP Tool Gateway & Action Signer"]
+    end
+
+    subgraph Execution["3. Execution & AI Layer"]
+        Adapters["Model Adapters (Claude, OpenAI, Ollama, OpenRouter)"]
+        Sandboxes["Local Git Worktrees / Docker / e2b Sandboxes"]
+    end
+
+    subgraph Data["4. Persistence & State"]
+        Postgres[("PostgreSQL 16 / Drizzle ORM (137 Tables)")]
+        Secrets[("AES Encrypted Secrets Store")]
+    end
+
+    UI -->|REST / WebSockets| Router
+    CLI -->|REST API| Router
+    ChatBridges -->|Webhook Events| Router
+
+    Router --> AuthMid
+    AuthMid --> Heartbeat
+    Heartbeat --> ApprovalEng
+    Heartbeat --> ToolGateway
+    Heartbeat --> Adapters
+
+    ToolGateway --> Sandboxes
+    Router --> Postgres
+    Heartbeat --> Postgres
+    AuthMid --> Secrets
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-a-en', 'exp-a-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-a-th', 'exp-a-en')">Thanglish</button>
+            </div>
+            <p id="exp-a-en" class="lang-text">
+              <strong>English Explanation:</strong> The Operator initiates tasks via the React UI, CLI, or Chat Bridges. Requests hit Express API routes guarded by tenant-isolation middleware. The Heartbeat Daemon schedules turns, queries the Model Adapter, routes required tools through the MCP Tool Gateway, enforces human approvals if sensitive actions are requested, and commits execution state to PostgreSQL.
+            </p>
+            <p id="exp-a-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Namma user UI-la iruntho illa CLI-la iruntho task create pannuvanga. Request direct-ah Express API-kku pogum. Anga tenant check panni, Heartbeat Runner turn start pannum. LLM-kitta kettu tool call execute panna MCP Gateway vazhiya safe sandbox-la run aagum. Crucial actions iruntha human approval ketkum. Ella data-vum 137 tables ulla PostgreSQL DB-la safe-ah save aagum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram B -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram B: Detailed Component Architecture</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+graph LR
+    subgraph UI_Layer["UI Subsystem"]
+        Pages["Pages (Issues, Dashboard, OrgChart)"]
+        Hooks["useLiveEvents, useIssues, useApprovals"]
+        Tokens["Semantic Design Tokens (ui/src/index.css)"]
+    end
+
+    subgraph Server_Core["Express Server Core"]
+        App["app.ts (Express 4 App)"]
+        Routes["routes/ (issues, companies, agents, tools)"]
+        Services["services/ (heartbeat, budgets, watchdogs)"]
+        WsServer["realtime/live-events-ws.ts"]
+    end
+
+    subgraph Adapters_Layer["AI Adapters"]
+        ClaudeAd["claude-local"]
+        CodexAd["codex-local"]
+        OllamaAd["ollama-local"]
+        OpenRouterAd["openrouter-local"]
+    end
+
+    subgraph Storage_Layer["Database Subsystem"]
+        Drizzle["Drizzle ORM Engine"]
+        PgRuntime["Embedded PostgreSQL / Postgres 16"]
+    end
+
+    Pages --> Hooks
+    Hooks -->|Fetch & WS| App
+    App --> Routes
+    Routes --> Services
+    Services --> WsServer
+    WsServer -.->|Real-time events| Hooks
+    Services --> Adapters_Layer
+    Services --> Drizzle
+    Drizzle --> PgRuntime
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-b-en', 'exp-b-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-b-th', 'exp-b-en')">Thanglish</button>
+            </div>
+            <p id="exp-b-en" class="lang-text">
+              <strong>English Explanation:</strong> Shows internal subsystem wiring: React pages consume custom hooks connected to Express routes and the WebSocket live event stream. Server services invoke AI Adapters and persist data via Drizzle ORM.
+            </p>
+            <p id="exp-b-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Frontend pages hooks vazhiya backend API-kooda pesum. Real-time updates WebSocket live-events stream vazhiya instantly display aagum. Server services AI adapter-ah call panni result-ah Drizzle ORM moolama database-la update pannum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram C -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram C: Request Lifecycle Sequence Diagram</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Operator as Human Operator
+    participant UI as React 19 Frontend
+    participant API as Express Router (/api/issues)
+    participant HB as Heartbeat Daemon (heartbeat.ts)
+    participant LLM as AI Model Adapter (Claude/OpenAI)
+    participant GW as MCP Tool Gateway
+    participant DB as PostgreSQL (Drizzle)
+
+    Operator->>UI: Submit New Issue ("Fix Auth Bug")
+    UI->>API: POST /api/issues { title, companyId, priority }
+    API->>DB: Insert issue record (status: 'open')
+    API-->>UI: 201 Created (Issue #101)
+    
+    Note over HB: Heartbeat Poller detects runnable issue
+    HB->>DB: Acquire execution lease & set status 'in_progress'
+    HB->>LLM: Generate plan with system prompt + issue context
+    LLM-->>HB: Tool Call Requested: "git_checkout_branch"
+    
+    HB->>GW: Dispatch tool execution intent
+    GW->>GW: Check policy: Is action gated?
+    alt Action is Safe (Read-only)
+        GW-->>HB: Execute immediately & return stdout
+    else Action requires Human Approval (Amber Gate)
+        GW->>DB: Create Approval Request (status: 'pending')
+        GW-->>HB: Pause turn; wait for operator decision
+        HB->>UI: Emit Live Event (WS: "Approval Needed")
+        Operator->>UI: Click "Approve Action"
+        UI->>API: POST /api/approvals/12/decide { decision: 'approved' }
+        API->>DB: Update approval record
+        API->>HB: Wake up paused heartbeat turn
+        HB->>GW: Resume execution in sandbox
+    end
+
+    HB->>DB: Write turn logs, token costs, and work products
+    HB->>DB: Update issue status to 'completed'
+    HB->>UI: Emit Live Event ("Issue Completed")
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-c-en', 'exp-c-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-c-th', 'exp-c-en')">Thanglish</button>
+            </div>
+            <p id="exp-c-en" class="lang-text">
+              <strong>English Explanation:</strong> Traces a complete user request from creation through heartbeat dispatch, LLM tool generation, approval gating, sandbox execution, and final database status update.
+            </p>
+            <p id="exp-c-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Operator issue submit panna udane DB-la insert aagum. Heartbeat engine athai pick panni lease edukum. LLM tool run panna solrapo, athu dangerous action-ah iruntha 'Amber Gate' approval request create panni pause pannum. User UI-la approve pannona turn resume aagi, sandbox-la code execute panni issue complete aagum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram D -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram D: AI Model Routing Flowchart</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+flowchart TD
+    Start([Task Turn Triggered]) --> CheckConfig{Check Agent Configuration}
+    CheckConfig -->|Agent pins Model| UsePinned[Use Pinned Model Profile]
+    CheckConfig -->|Default Routing| CheckCompanyDefault{Check Company AI Connection}
+
+    CheckCompanyDefault -->|Anthropic Key Set| RouteClaude[Route to Claude 3.5 Sonnet]
+    CheckCompanyDefault -->|OpenAI Key Set| RouteOpenAI[Route to OpenAI GPT-4o]
+    CheckCompanyDefault -->|OpenRouter Key Set| RouteOpenRouter[Route to OpenRouter Gateway]
+    CheckCompanyDefault -->|No Cloud Key Set| RouteOllama[Fallback to Local Ollama]
+
+    RouteClaude --> ExecLLM[Invoke Adapter via Provider SDK]
+    RouteOpenAI --> ExecLLM
+    RouteOpenRouter --> ExecLLM
+    RouteOllama --> ExecLLM
+
+    ExecLLM --> CheckResponse{Response Status?}
+    CheckResponse -->|Success 200| ParseTools[Parse Response & Function Calls]
+    CheckResponse -->|Rate Limit 429| TriggerBackoff[Exponential Backoff & Retry]
+    CheckResponse -->|Auth Error 401| RefusalError[Emit Configuration Error & Stop]
+    CheckResponse -->|Timeout / Network Err| CheckFallback{Fallback Provider Configured?}
+
+    CheckFallback -->|Yes| SwitchFallback[Switch to Secondary Provider] --> ExecLLM
+    CheckFallback -->|No| FailTurn[Mark Turn Failed & Alert Operator]
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-d-en', 'exp-d-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-d-th', 'exp-d-en')">Thanglish</button>
+            </div>
+            <p id="exp-d-en" class="lang-text">
+              <strong>English Explanation:</strong> Illustrates how Geetorus inspects company-level and agent-level configurations to select between Anthropic, OpenAI, OpenRouter, and local Ollama, handling rate limits with backoff.
+            </p>
+            <p id="exp-d-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Task start aagum pothu, agent config check pannum. Anthropic, OpenAI, OpenRouter or local Ollama ethu available-nu pathu route pannum. Rate limit vantha exponential backoff panni retry pannum. Fallback model iruntha athuku switch pannum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram E -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram E: Agent and Tool Execution Flowchart</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+flowchart TD
+    StartTurn([Heartbeat Turn Awakens]) --> BuildPrompt[Assemble System Prompt + History + MCP Tool Schemas]
+    BuildPrompt --> CallModel[Call LLM Provider]
+    CallModel --> ReceiveOutput{Output Type?}
+    
+    ReceiveOutput -->|Plain Text Answer| RecordFinal[Record Final Response in Issue Thread]
+    ReceiveOutput -->|Tool Call Request| CheckToolPolicy{Check Tool Access Policy}
+
+    CheckToolPolicy -->|Policy: DENY| RejectTool[Reject Tool Call & Send Error to Agent]
+    CheckToolPolicy -->|Policy: AMBER GATE| PauseApproval[Create Amber Approval & Pause Turn]
+    CheckToolPolicy -->|Policy: ALLOW| VerifySigning[Verify Cryptographic Tool Signing Token]
+
+    PauseApproval --> WaitHuman{Human Decision?}
+    WaitHuman -->|Approved| VerifySigning
+    WaitHuman -->|Rejected| InformAgent[Notify Agent: Action Denied by Operator] --> CallModel
+
+    VerifySigning --> DispatchSandbox[Dispatch to Git Worktree / Sandbox]
+    DispatchSandbox --> CaptureOutput[Capture stdout / stderr / diffs]
+    CaptureOutput --> AppendObs[Append Observation to Context]
+    AppendObs --> LoopNextTurn{More Turns or Completed?}
+    LoopNextTurn -->|Continue| CallModel
+    LoopNextTurn -->|Done| CloseIssue[Update Issue to Closed & Log Activity]
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-e-en', 'exp-e-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-e-th', 'exp-e-en')">Thanglish</button>
+            </div>
+            <p id="exp-e-en" class="lang-text">
+              <strong>English Explanation:</strong> Shows the complete inner agent loop: prompt assembly, model reasoning, policy verification (Deny, Amber Gate, Allow), cryptographic token verification, and sandbox execution.
+            </p>
+            <p id="exp-e-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Agent prompt ready panni model kitta pogum. Model tool execute panna sonna, policy check nadakum. Amber gate na human approve panra varaikum wait pannum. Verify aana apram sandbox-la run panni, output-ah thirumba agent context-ku feedback-ah anupum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram F -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram F: Data Flow Diagram</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+graph TD
+    subgraph Ingestion["Input Sources"]
+        UserIn["User Prompts & Issues"]
+        WebhookIn["GitHub Commits & PR Events"]
+        EnvIn["Environment Variables & Secrets"]
+    end
+
+    subgraph State_Storage["PostgreSQL Relational Entities"]
+        CompaniesTable[("companies & company_memberships")]
+        IssuesTable[("issues, issue_comments, issue_relations")]
+        TurnsTable[("heartbeat_runs, turn_telemetry")]
+        ApprovalsTable[("approvals & approval_comments")]
+        CostsTable[("cost_events & budget_policies")]
+        SecretsTable[("company_secrets (AES-256)")]
+    end
+
+    subgraph Output_Deliverables["Outputs & Side Effects"]
+        GitOutput["Git Commits & Pull Requests"]
+        LiveEvents["WebSocket Live Event Feeds"]
+        AuditLog["Immutable Activity Log"]
+    end
+
+    UserIn --> IssuesTable
+    WebhookIn --> IssuesTable
+    EnvIn --> SecretsTable
+
+    IssuesTable --> TurnsTable
+    TurnsTable --> ApprovalsTable
+    TurnsTable --> CostsTable
+    TurnsTable --> GitOutput
+    TurnsTable --> AuditLog
+    TurnsTable --> LiveEvents
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-f-en', 'exp-f-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-f-th', 'exp-f-en')">Thanglish</button>
+            </div>
+            <p id="exp-f-en" class="lang-text">
+              <strong>English Explanation:</strong> Demonstrates data lineage: user issues and webhook events flow into relational tables, drive heartbeat turns, record budget costs and approvals, and generate git commits.
+            </p>
+            <p id="exp-f-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Input data issues table-ku pogum, secrets encrypted-ah store aagum. Turn execute aagura apo cost events, approvals, git commits nu ovvoru data layer-um systematically update aagum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram G -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram G: Error Handling Flowchart</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+flowchart TD
+    ErrorOccurs([Error Encountered]) --> CategorizeError{Error Category?}
+    
+    CategorizeError -->|HTTP / Schema Validation| Return400[Return 400 Bad Request with Zod Error Details]
+    CategorizeError -->|Authentication Failure| Return401[Return 401 Unauthorized / Tenant Mismatch]
+    CategorizeError -->|LLM Provider 5xx / 429| RetryLLM[Retry with Exponential Backoff max 3 attempts]
+    CategorizeError -->|Tool Execution Non-Zero Exit| ToolFail[Capture stderr as Observation; Prompt Agent to Fix]
+    CategorizeError -->|Process / Watchdog Timeout| WatchdogTrigger[Task Watchdog Marks Turn Stalled; Releases Lease]
+    CategorizeError -->|Embedded Postgres Lock| WinLock[Detect Lock; Instruct Operator to Kill PID]
+
+    RetryLLM --> CheckExhausted{Retries Exhausted?}
+    CheckExhausted -->|Yes| HaltTask[Mark Issue Blocked & Alert Operator via Live Events]
+    CheckExhausted -->|No| RetryLLM
+
+    ToolFail --> AgentNextTurn[Agent attempts code adjustment]
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-g-en', 'exp-g-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-g-th', 'exp-g-en')">Thanglish</button>
+            </div>
+            <p id="exp-g-en" class="lang-text">
+              <strong>English Explanation:</strong> Details how the system handles validation errors, auth mismatches, LLM rate limits/outages, tool execution failures, watchdog timeouts, and embedded database locks.
+            </p>
+            <p id="exp-g-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Error vantha category pathu handle pannum: Validation na 400, LLM outage na 3 times backoff retry, tool fail aana stderr-ah agent-kitteye kuduthu thirumba fix panna sollum. Stalled aana watchdog lease release panni alert pannum.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram H -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram H: Deployment Architecture</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+graph TB
+    subgraph DevMode["Local Development (Zero Config)"]
+        LocalHost["Developer Machine (Node >= 24)"]
+        LocalServer["Express API Server (Port 3100)"]
+        LocalUI["Vite Dev Server (Port 5173 / 3100)"]
+        EmbedPg["Embedded PostgreSQL (Port 54322 / dynamic)"]
+        LocalGit["Local Git Worktrees (.geetorus/worktrees)"]
+    end
+
+    subgraph ProdMode["Production / Cloud Deployment"]
+        DockerHost["Docker Container / Cloud VM"]
+        ProdServer["Node.js Cluster (NODE_ENV=production)"]
+        ExtPg[("External Managed PostgreSQL 16")]
+        CloudSandbox["e2b / Daytona Remote Cloud Sandboxes"]
+    end
+
+    LocalHost --> LocalServer
+    LocalServer --> LocalUI
+    LocalServer --> EmbedPg
+    LocalServer --> LocalGit
+
+    DockerHost --> ProdServer
+    ProdServer --> ExtPg
+    ProdServer --> CloudSandbox
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-h-en', 'exp-h-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-h-th', 'exp-h-en')">Thanglish</button>
+            </div>
+            <p id="exp-h-en" class="lang-text">
+              <strong>English Explanation:</strong> Compares the zero-configuration local development mode (using embedded PostgreSQL and local git worktrees) with the production deployment mode (external PostgreSQL and cloud sandboxes).
+            </p>
+            <p id="exp-h-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Local-la run panna extra software ethuvum thevailla—Node.js mattum pothum, embedded Postgres thanave launch aagirum. Production-la external PostgreSQL matrum Docker/e2b cloud sandboxes use pannalam.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Diagram I -->
+        <div class="diagram-panel">
+          <div class="diagram-header">
+            <span class="diagram-title"><span>🔷</span> Diagram I: Trust Boundaries and Security Diagram</span>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <div class="diagram-viewport">
+            <div class="mermaid">
+graph TD
+    subgraph Untrusted_Zone["Untrusted Client Zone"]
+        WebUser["Browser User / Mobile Client"]
+        ExternalWebhooks["External Webhooks (GitHub, Discord)"]
+    end
+
+    subgraph Boundary_1["Trust Boundary 1: Perimeter"]
+        AuthFirewall["CORS, TrustProxy, Auth Token Verifier"]
+    end
+
+    subgraph Controlled_Zone["Geetorus Control Plane (High Trust)"]
+        CoreAPI["Express API Server"]
+        ScopeCheck["Tenant / Company Isolation Barrier"]
+        ActionSigner["Cryptographic HMAC Action Signer"]
+        SecretsVault[("Encrypted Secrets (AES-256)")]
+    end
+
+    subgraph Boundary_2["Trust Boundary 2: Execution Gating"]
+        ApprovalFirewall["Amber Approval Gatekeeper"]
+    end
+
+    subgraph Sandbox_Zone["Isolated Agent Execution Zone (Low Trust)"]
+        AgentRuntime["AI Agent Model Context"]
+        Worktree["Constrained Git Sandbox / Workspace"]
+    end
+
+    WebUser -->|HTTPS Bearer Token| Boundary_1
+    ExternalWebhooks -->|Webhook Signature| Boundary_1
+    Boundary_1 --> CoreAPI
+
+    CoreAPI --> ScopeCheck
+    ScopeCheck --> ActionSigner
+    ActionSigner --> Boundary_2
+    Boundary_2 -->|Gated Approval Passed| AgentRuntime
+    AgentRuntime --> Worktree
+    CoreAPI -.-> SecretsVault
+            </div>
+          </div>
+          <div class="diagram-explanation">
+            <div class="explanation-toggle">
+              <button class="lang-btn active" onclick="toggleLang(this, 'exp-i-en', 'exp-i-th')">English</button>
+              <button class="lang-btn" onclick="toggleLang(this, 'exp-i-th', 'exp-i-en')">Thanglish</button>
+            </div>
+            <p id="exp-i-en" class="lang-text">
+              <strong>English Explanation:</strong> Highlights the dual security perimeters: Perimeter 1 validates incoming HTTP traffic, tokens, and company tenancy. Perimeter 2 sits between AI Agent reasoning and code execution, preventing untrusted LLM outputs from running arbitrary commands without cryptographic signing and human approval.
+            </p>
+            <p id="exp-i-th" class="lang-text" style="display: none;">
+              <strong>Thanglish Explanation:</strong> <em>Rendu security walls iruku: First wall incoming user tokens and company access-ah check pannum. Second wall AI agent-kum execute aagura code-kum naduvula iruku. Agent ethavathu dangerous command pota, human approval illama run panna mudiyathu.</em>
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 7: 05-complete-working-flow -->
+      <!-- ========================================================================= -->
+      <section id="doc-05-flow" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">05 — Execution Trace</span>
+          <h2 class="page-title">End-to-End Execution Trace & Working Flow</h2>
+          <p class="page-subtitle">Trace of a real user request ("Fix Auth Expiration Bug") from UI creation to verified commit.</p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: #fff; margin-bottom: 0.75rem;">Chronological 5-Phase Execution Flow</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: 8px;">
+              <h4 style="color: var(--accent-cyan); font-size: 1rem; margin-bottom: 0.4rem;">Phase 1: Boot & Daemon Awaken</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                <code>startServer()</code> in <code>server/src/index.ts</code> boots OpenTelemetry, checks migrations via <code>applyPendingMigrations()</code>, boots embedded PostgreSQL, mounts 78 routes, and starts <code>heartbeatService.start()</code> polling every 1,000ms.
+              </p>
+            </div>
+
+            <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: 8px;">
+              <h4 style="color: var(--primary); font-size: 1rem; margin-bottom: 0.4rem;">Phase 2: Task Submission</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Operator clicks "New Issue" in <code>ui/src/pages/Issues.tsx</code>. <code>useIssues.ts</code> calls <code>POST /api/issues</code>. Express route validates schema with Zod, inserts record into <code>issues</code> table, and broadcasts <code>issue:created</code> over WebSockets.
+              </p>
+            </div>
+
+            <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: 8px;">
+              <h4 style="color: var(--accent-amber); font-size: 1rem; margin-bottom: 0.4rem;">Phase 3: Heartbeat Turn & Worktree Claim</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Heartbeat poller in <code>heartbeat.ts</code> detects runnable issue. <code>workspaceRuntimeLeaseService.claimLease()</code> locks the task, checks <code>budgetService.assertBudgetAvailable()</code>, creates a local Git worktree (<code>.geetorus/worktrees/iss_101</code>), and assembles system prompt context.
+              </p>
+            </div>
+
+            <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: 8px;">
+              <h4 style="color: var(--accent-rose); font-size: 1rem; margin-bottom: 0.4rem;">Phase 4: Tool Execution & Amber Gate Approval</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                LLM generates tool intent <code>file_read</code> (executed immediately in worktree). Agent patches code and calls <code>git_commit</code>. Policy classifies action as <strong>REQUIRE_APPROVAL</strong>. Turn pauses, UI displays amber approval card. Operator reviews diff and clicks <strong>Approve</strong>.
+              </p>
+            </div>
+
+            <div style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: 8px;">
+              <h4 style="color: var(--accent-emerald); font-size: 1rem; margin-bottom: 0.4rem;">Phase 5: Finalization & Audit Commit</h4>
+              <p style="font-size: 0.88rem; color: var(--text-muted);">
+                Turn resumes, commits git change, releases workspace lease, logs token expense in <code>cost_events</code>, marks issue status as <code>completed</code>, and notifies connected clients via <code>live-events-ws.ts</code>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 8: 06-module-and-directory-reference -->
+      <!-- ========================================================================= -->
+      <section id="doc-06-modules" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">06 — Codebase Map</span>
+          <h2 class="page-title">Module & Directory Reference</h2>
+          <p class="page-subtitle">Directory map of the Geetorus monorepo and its 4 ecosystem repositories.</p>
+        </div>
+
+        <div class="glass-card">
+          <pre><code>geetorusai/
+├── cli/                         # Unified `geetorusai` CLI command suite
+├── packages/                    # Decoupled shared libraries and adapters
+│   ├── adapter-utils/           # Git sync, prompt rendering, stream serialization
+│   ├── adapters/                # 13 Model adapters (Claude, Codex, Ollama, Gemini, etc.)
+│   ├── db/                      # Drizzle ORM schemas (137 tables) & embedded Postgres runtime
+│   ├── geetorus-eval-kernel/    # Evaluation harnesses, scoring, promptfoo integrations
+│   ├── geetorus-runner/         # Containerized runner runtime and remote process managers
+│   ├── google-sheets-mcp-server/# Built-in MCP server for Google Sheets integration
+│   ├── mcp-server/              # Core embedded Model Context Protocol server
+│   ├── plugins/                 # Extensible plugin system and lifecycle hooks
+│   ├── shared/                  # Shared TypeScript types, Zod validators, design constants
+│   ├── skills-catalog/          # Reusable skill definitions (agentmail, para-memory, etc.)
+│   └── teams-catalog/           # Pre-configured agent team blueprints
+├── patches/                     # Patched npm dependencies (embedded-postgres, acpx, etc.)
+├── scripts/                     # Dev runner (`dev-runner.ts`), token checkers, release tools
+├── server/                      # Express.js REST API server and background orchestrator
+└── ui/                          # React 19 + Vite frontend control plane application
+
+Ecosystem Repositories:
+├── companies-tool/              # `companies.sh` packaging CLI for virtual companies
+├── geetorus-companies/          # 17 turnkey virtual company configurations
+├── geetorus-market/             # Next.js 15 template marketplace web app
+└── geetorus-docs-docusaurus/    # External documentation site</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECTION 9: 07-functions-classes-and-responsibilities -->
+      <!-- ========================================================================= -->
+      <section id="doc-07-functions" class="doc-page">
+        <div class="page-header">
+          <span class="page-category">07 — Symbol Reference</span>
+          <h2 class="page-title">Functions, Classes, and Responsibilities</h2>
+          <p class="page-subtitle">Core functions, signatures, callers/callees, and security guards.</p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: #fff; margin-bottom: 0.6rem;"><code>startServer(): Promise&lt;HttpServer&gt;</code></h3>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem;">File: <code>server/src/index.ts</code></p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Orchestrates the complete bootstrap sequence: boots OpenTelemetry, checks migrations via <code>inspectMigrations()</code>, initializes embedded PostgreSQL on dynamic port, mounts Express app via <code>createApp()</code>, binds WebSockets, and starts background heartbeat turns.
+          </p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: #fff; margin-bottom: 0.6rem;"><code>createApp(db: Db, config: AppConfig): Express.Application</code></h3>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem;">File: <code>server/src/app.ts</code></p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Express application factory mounting global middlewares (JSON 50MB limit, <code>actorMiddleware</code>, <code>privateHostnameGuard</code>), mounting 78 modular route handlers under <code>/api/*</code>, and registering static React UI handlers.
+          </p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: #fff; margin-bottom: 0.6rem;"><code>heartbeatService.start(): void</code></h3>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem;">File: <code>server/src/services/heartbeat.ts</code> (29,391 lines)</p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Central turn scheduler polling every 1,000ms. Identifies runnable issues, claims exclusive runtime leases in <code>execution_workspace_runtime_leases</code>, checks budget thresholds, templates prompt context with <code>renderGeetorusWakePrompt()</code>, invokes active AI model adapter, and dispatches tool intents to the MCP gateway.
+          </p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: #fff; margin-bottom: 0.6rem;"><code>toolGatewayService.dispatch(request: ToolDispatchRequest): Promise&lt;ToolDispatchResult&gt;</code></h3>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem;">File: <code>server/src/services/tool-gateway.ts</code></p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Regulates all agent tool intents. Evaluates company tool access policy: if <code>DENY</code>, rejects immediately; if <code>REQUIRE_APPROVAL</code>, pauses turn and creates amber approval record in <code>approvals</code> table; if <code>ALLOW</code>, verifies HMAC signature with <code>GEETORUS_TOOL_ACTION_SIGNING_SECRET</code> and executes inside the workspace.
+          </p>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; color: #fff; margin-bottom: 0.6rem;"><code>approvalService.decideApproval(id: string, decision: 'approved' | 'rejected'): Promise&lt;Approval&gt;</code></h3>
+          <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.5rem;">File: <code>server/src/services/approvals.ts</code></p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Receives human operator review verdicts from <code>POST /api/approvals/:id/decide</code>. If approved, wakes up paused heartbeat turn and executes tool; if rejected, feeds operator rejection feedback back to agent context to allow autonomous replanning.
+          </p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Pitch Modal -->
+  <div class="modal-overlay" id="pitchModal" onclick="closePitchModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closePitchModal()">&times;</button>
+      <h3 id="modalTitle" style="font-family: var(--font-display); font-size: 1.35rem; color: #fff; margin-bottom: 0.75rem;"></h3>
+      <p id="modalBody" style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.7; background: #080c16; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-subtle);"></p>
+      <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-ghost" onclick="copyModalPitch()">📋 Copy Pitch</button>
+        <button class="btn btn-pitch" onclick="closePitchModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Mermaid.js
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#080c16',
+        primaryColor: '#6366f1',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#818cf8',
+        lineColor: '#38bdf8',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+      }
+    });
+
+    // Navigation switching
+    function showDoc(docId) {
+      document.querySelectorAll('.doc-page').forEach(page => page.classList.remove('active'));
+      document.querySelectorAll('.nav-item button').forEach(btn => btn.classList.remove('active'));
+      
+      const targetPage = document.getElementById('doc-' + docId);
+      if (targetPage) {
+        targetPage.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      event.currentTarget.classList.add('active');
+    }
+
+    // Toggle English / Thanglish
+    function toggleLang(btn, showId, hideId) {
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById(showId).style.display = 'block';
+      document.getElementById(hideId).style.display = 'none';
+    }
+
+    // Pitch Modal Logic
+    const pitchData = {
+      '30s': {
+        title: '⚡ 30-Second Elevator Pitch (For Round 1 Judges)',
+        body: 'Most AI tools today are single-agent chatbots that forget context, break production without asking, and have no accountability. Geetorus is a Virtual Company Operating System. We don’t just prompt an LLM; we deploy an entire engineering department of coordinated agents—Tech Leads, Coders, and QA—governed by strict budget controls, human approval gates, and sandboxed Git environments. You assign a high-level goal, the agents decompose it into tracked issues, write code, run tests, and pause for your sign-off before anything touches production. It’s autonomous execution with enterprise safety.'
+      },
+      '2m': {
+        title: '🔬 2-Minute Deep Technical Pitch (For Architecture Judges)',
+        body: 'Under the hood, Geetorus is built as a hardened TypeScript monorepo powered by an Express API server, React 19 frontend, and Drizzle ORM backed by 137 PostgreSQL relational tables. Autonomous behavior is driven by a deterministic heartbeat scheduling engine (server/src/services/heartbeat.ts) rather than uncontrolled while-loops. When a task is dispatched, the orchestration engine provisions an isolated Git worktree lease and dispatches the turn to the active model adapter—supporting Claude 3.5 Sonnet, GPT-4o, and local Ollama. All tool interactions flow through an MCP-compliant Tool Gateway that enforces cryptographically signed execution tokens. If an agent attempts a sensitive shell command or git push, Geetorus traps the call in an Amber approval state. Once approved by the operator in the UI, the agent resumes execution, verifies completion contracts, and records an immutable audit log.'
+      }
+    };
+
+    function openPitchModal(type) {
+      const data = pitchData[type];
+      document.getElementById('modalTitle').innerText = data.title;
+      document.getElementById('modalBody').innerText = data.body;
+      document.getElementById('pitchModal').classList.add('active');
+    }
+
+    function closePitchModal() {
+      document.getElementById('pitchModal').classList.remove('active');
+    }
+
+    function copyModalPitch() {
+      const text = document.getElementById('modalBody').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Pitch script copied to clipboard!');
+    }
+
+    function copyPitchText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text);
+      alert('Copied to clipboard!');
+    }
+
+    function copyCode(btn) {
+      const code = btn.previousElementSibling.innerText;
+      navigator.clipboard.writeText(code);
+      btn.innerText = 'Copied!';
+      setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
+    }
+
+    // Client-side search across active page
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase();
+      if (!query) {
+        document.querySelectorAll('.doc-page p, .doc-page tr, .doc-page .glass-card').forEach(el => el.style.opacity = '1');
+        return;
+      }
+      document.querySelectorAll('.doc-page.active p, .doc-page.active tr, .doc-page.active .glass-card').forEach(el => {
+        if (el.innerText.toLowerCase().includes(query)) {
+          el.style.opacity = '1';
+        } else {
+          el.style.opacity = '0.25';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+openapi: 3.0.3
+info:
+  title: Geetorus AI Agent Control Plane API
+  description: Universal control plane and operating system for autonomous virtual AI companies.
+  version: 2026.325.0
+servers:
+  - url: http://localhost:3100/api
+    description: Local development server
+paths:
+  /health:
+    get:
+      summary: Health check probe
+      description: Returns health status of database, memory, and runner daemon.
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  uptime:
+                    type: number
+                    example: 3600
+                  version:
+                    type: string
+                    example: 2026.325.0
+
+  /companies:
+    get:
+      summary: List accessible companies
+      responses:
+        '200':
+          description: List of companies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Company'
+    post:
+      summary: Create a new company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: Acme Autonomous Labs
+                budgetLimitDaily:
+                  type: number
+                  example: 50.0
+      responses:
+        '201':
+          description: Company created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+
+  /issues:
+    get:
+      summary: Query tasks
+      parameters:
+        - name: companyId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [backlog, todo, in_progress, in_review, done, blocked, cancelled]
+      responses:
+        '200':
+          description: Array of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
+    post:
+      summary: Create a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - companyId
+                - title
+              properties:
+                companyId:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                  example: Build OAuth2 Google Login
+                description:
+                  type: string
+                assigneeId:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+
+components:
+  schemas:
+    Company:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        budgetLimitDaily:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    Issue:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        companyId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [backlog, todo, in_progress, in_review, done, blocked, cancelled]
+        assigneeId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
